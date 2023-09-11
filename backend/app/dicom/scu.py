@@ -109,15 +109,17 @@ def sendStudies(socket, job_id, startEvent, stopEvent):
     else:
         assoc.release()
 
+    firstLoop = True
     while resume:
         uidMap = {}
         prevStudyId = ''
         maxIndex = len(studies_series) - 1
         for index, study_series_item in enumerate(studies_series):
             curStudyId = study_series_item[0]
-            if ((prevStudyId != '') and (prevStudyId != curStudyId)):
+            if ((firstLoop == False) and (prevStudyId != curStudyId)):
                 print('Now wait between studies')
                 waitForNextSend(socket, job_id, option_study_interval * 60, stopEvent)
+            firstLoop = False
             prevStudyId = curStudyId
             if stopEvent.is_set():
                 socket.emit("data",{'job_id': job_id, 'msg': "Job stopped", 'status': 3}, broadcast=True)

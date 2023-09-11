@@ -51,6 +51,7 @@ def removestudies():
                 shutil.rmtree(filepath)
 
         # Remove DB entries
+        cur.execute("DELETE FROM series WHERE study_id IN ({})".format(','.join('?' for _ in ids)), ids)
         cur.execute("DELETE FROM study WHERE id IN ({})".format(','.join('?' for _ in ids)), ids)
         db.commit()
 

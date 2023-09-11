@@ -20,15 +20,16 @@ def init(socket, statusFunc, aetitle, port):
 
         socket.emit("data",{'msg': "Received C-STORE from " + assoc.requestor.ae_title, 'uid':ds.SOPInstanceUID}, broadcast=True)
         
-        savePath = os.path.join(os.getcwd(), 'Studies', ds.StudyInstanceUID)
-        saveFile = os.path.join(savePath, ds.SOPInstanceUID)
+        studyPath = os.path.join(os.getcwd(), 'Studies', ds.StudyInstanceUID)
+        seriesPath = os.path.join(studyPath, ds.SeriesInstanceUID)
+        saveFile = os.path.join(seriesPath, ds.SOPInstanceUID)
 
         # skip if image exists
         if os.path.exists(saveFile):
             return 0x0000
 
-        if not os.path.exists(savePath):
-            os.makedirs(savePath)
+        if not os.path.exists(seriesPath):
+            os.makedirs(seriesPath)
 
         ds.save_as(saveFile, write_like_original=False)
         fileSize = os.stat(saveFile).st_size / (1024 * 1024) # MB
@@ -39,7 +40,7 @@ def init(socket, statusFunc, aetitle, port):
         if study is None:
             cur.execute(
                 'INSERT INTO study (study_uid, study_desc, study_date, patient_name, modality, filepath) VALUES (?, ?, ?, ?, ?, ?)',
-                (ds.StudyInstanceUID, ds.StudyDescription, ds.StudyDate, ds.PatientName.family_comma_given(), ds.Modality, savePath))
+                (ds.StudyInstanceUID, ds.StudyDescription, ds.StudyDate, ds.PatientName.family_comma_given(), ds.Modality, studyPath))
             study = cur.execute('SELECT * FROM study WHERE study_uid = ?', (ds.StudyInstanceUID,)).fetchone()
         else:
             cur.execute(
@@ -53,7 +54,7 @@ def init(socket, statusFunc, aetitle, port):
             cur.execute(
                 'INSERT INTO series (study_id, series_uid, series_desc, series_date, modality, filepath, filesize) '
                 'VALUES (?, ?, ?, ?, ?, ?, ?)',
-                (int(study["id"]), ds.SeriesInstanceUID, ds.SeriesDescription, ds.SeriesDate, ds.Modality, savePath, fileSize))
+                (int(study["id"]), ds.SeriesInstanceUID, ds.SeriesDescription, ds.SeriesDate, ds.Modality, seriesPath, fileSize))
         else:
             fileSize = float(series["filesize"]) + fileSize
             cur.execute(
