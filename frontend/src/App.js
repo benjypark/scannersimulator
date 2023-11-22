@@ -16,6 +16,7 @@ import "./App.css";
 import JobModal from "./components/JobModal";
 import JobList from "./components/JobList";
 import TransitionAlert from "./components/TransitionAlert";
+import { BASE_URL } from './constants';
 
 const theme = createTheme({
   palette: {
@@ -71,7 +72,7 @@ function App() {
   
   const ScpSettings = () => {
     fetch(
-      'http://qascanner.circlecvi.com:5000/api/scpsettings', {
+      `${BASE_URL}/api/scpsettings`, {
         'methods':'GET', headers : { 'Content-Type':'application/json'}})
     .then((response) => response.json())
     .then((response) => setScpSettings(response))

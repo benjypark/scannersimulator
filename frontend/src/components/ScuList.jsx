@@ -10,6 +10,8 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 
+import { BASE_URL } from '../constants';
+
 function ScuList(props, ref) {
     const { modalJobStyle, ...other } = props;
     const [open, setOpen] = React.useState(false);
@@ -34,7 +36,7 @@ function ScuList(props, ref) {
     }));
   
     const getScanners = () => {
-      fetch('http://qascanner.circlecvi.com:5000/api/scanners',{
+      fetch(`${BASE_URL}/api/scanners`,{
         'methods':'GET',
         headers : {
           'Content-Type':'application/json'
@@ -51,7 +53,7 @@ function ScuList(props, ref) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ arg_scanner_name: scanner_name, arg_scanner_aetitle: scanner_aetitle })
       };
-      fetch('http://qascanner.circlecvi.com:5000/api/addscanner', requestOptions)
+      fetch(`${BASE_URL}/api/addscanner`, requestOptions)
         .then(response => response.json())
         .then(response => setPostId( response.success ));
     };
@@ -61,7 +63,7 @@ function ScuList(props, ref) {
       const newList = scanners.filter((scannerOrig) => scannerOrig.id !== scanner.id);
       setScanners(newList);
   
-      fetch('http://qascanner.circlecvi.com:5000/api/removescanner/' + scanner.id, { method: 'POST' })
+      fetch(`${BASE_URL}/api/removescanner/` + scanner.id, { method: 'POST' })
         .then(response => setPostId( response.success ));
     }
   

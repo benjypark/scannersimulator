@@ -10,6 +10,8 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 
+import { BASE_URL } from '../constants';
+
 function ScpList(props, ref) {
     const { modalJobStyle, ...other } = props;
     const [postId, setPostId] = React.useState('');
@@ -39,7 +41,7 @@ function ScpList(props, ref) {
     };
   
     const getDestinations = () => {
-      fetch('http://qascanner.circlecvi.com:5000/api/destinations',{
+      fetch(`${BASE_URL}/api/destinations`,{
         'methods':'GET',
         headers : {
           'Content-Type':'application/json'
@@ -56,7 +58,7 @@ function ScpList(props, ref) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ arg_dest_name: dest_name, arg_dest_aetitle: dest_aetitle, arg_dest_port: dest_port })
       };
-      fetch('http://qascanner.circlecvi.com:5000/api/adddestination', requestOptions)
+      fetch(`${BASE_URL}/api/adddestination`, requestOptions)
         .then(response => response.json())
         .then(response => setPostId( response.success ));
     };
@@ -66,7 +68,7 @@ function ScpList(props, ref) {
       const newList = destinations.filter((destinationOrig) => destinationOrig.id !== destination.id);
       setDestinations(newList);
   
-      fetch('http://qascanner.circlecvi.com:5000/api/removedestination/' + destination.id, { method: 'POST' })
+      fetch(`${BASE_URL}/api/removedestination/` + destination.id, { method: 'POST' })
         .then(response => setPostId( response.success ));
     }
   

@@ -2,6 +2,8 @@ import * as React from "react";
 import { DataGrid } from '@mui/x-data-grid';
 import Button from '@mui/material/Button';
 
+import { BASE_URL } from '../constants';
+
 function StudyList(props, ref) {
 
     const [studies, setStudies] = React.useState([])
@@ -21,7 +23,7 @@ function StudyList(props, ref) {
       };
 
       // Perform the deletion logic here using the selectedStudyIds
-      fetch('http://qascanner.circlecvi.com:5000/api/removestudies', {
+      fetch(`${BASE_URL}/api/removestudies`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload) 
@@ -72,7 +74,7 @@ function StudyList(props, ref) {
     ];
   
     React.useEffect(() => {
-      fetch("http://qascanner.circlecvi.com:5000/api/studies")
+      fetch(`${BASE_URL}/api/studies`)
         .then((response) => response.json())
         .then((response) => setStudies(response))
     }, [])

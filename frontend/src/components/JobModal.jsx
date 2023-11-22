@@ -9,6 +9,7 @@ import ScuList from "./ScuList";
 import ScpList from "./ScpList";
 import JobOptions from "./JobOptions";
 import JobSchedule from "./JobSchedule";
+import { BASE_URL } from '../constants';
 
 const modalJobStyle = {
   position: 'absolute',
@@ -95,7 +96,7 @@ export default function JobModal({ socket, postId, setPostId }) {
         arg_schedule: schedule
        })
     };
-    fetch('http://qascanner.circlecvi.com:5000/api/addjob', requestOptions)
+    fetch(`${BASE_URL}/api/addjob`, requestOptions)
       .then(response => response.json())
       .then(response => setPostId( response.success ));
   };

@@ -1,0 +1,1 @@
+export const BASE_URL = 'http://qascanner.circlecvi.com:5000';

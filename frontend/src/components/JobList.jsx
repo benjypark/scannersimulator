@@ -14,6 +14,8 @@ import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
+import { BASE_URL } from '../constants';
+
 export default function JobList( {socket, postId, setPostId} ) {
     const [jobs, setJobs] = React.useState([]);
     const [status, setStatus] = React.useState({});
@@ -21,7 +23,7 @@ export default function JobList( {socket, postId, setPostId} ) {
     const [expanded, setExpanded] = React.useState({});
 
     const getJobs = () => {
-        fetch('http://qascanner.circlecvi.com:5000/api/jobs',{
+        fetch(`${BASE_URL}/api/jobs`,{
         'methods':'GET',
         headers : {
             'Content-Type':'application/json'
@@ -37,17 +39,17 @@ export default function JobList( {socket, postId, setPostId} ) {
     }
 
     const handleStartJob = (job) => {
-        fetch('http://qascanner.circlecvi.com:5000/api/startjob/' + job.id, { method: 'POST' })
+        fetch(`${BASE_URL}/api/startjob/` + job.id, { method: 'POST' })
         .then(response => setPostId( response.success ));
     }
 
     const handlePauseJob = (job) => {
-        fetch('http://qascanner.circlecvi.com:5000/api/pausejob/' + job.id, { method: 'POST' })
+        fetch(`${BASE_URL}/api/pausejob/` + job.id, { method: 'POST' })
         .then(response => setPostId( response.success ));
     }
 
     const handleStopJob = (job) => {
-        fetch('http://qascanner.circlecvi.com:5000/api/stopjob/' + job.id, { method: 'POST' })
+        fetch(`${BASE_URL}/api/stopjob/` + job.id, { method: 'POST' })
         .then(response => setPostId( response.success ));
     }
 
@@ -56,7 +58,7 @@ export default function JobList( {socket, postId, setPostId} ) {
         const newList = jobs.filter((jobOrig) => jobOrig.id !== job.id);
         setJobs(newList);
 
-        fetch('http://qascanner.circlecvi.com:5000/api/removejob/' + job.id, { method: 'DELETE' })
+        fetch(`${BASE_URL}/api/removejob/` + job.id, { method: 'DELETE' })
         .then(response => setPostId( response.success ));
     }
 
