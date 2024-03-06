@@ -37,31 +37,46 @@ def init(socket, statusFunc, aetitle, port):
         db = sqldb.getDbConnection()
         cur = db.cursor()
         study = cur.execute('SELECT * FROM study WHERE study_uid = ?', (ds.StudyInstanceUID,)).fetchone()
+
         if study is None:
             cur.execute(
                 'INSERT INTO study (study_uid, study_desc, study_date, patient_name, modality, filepath) VALUES (?, ?, ?, ?, ?, ?)',
-                (ds.StudyInstanceUID, ds.StudyDescription, ds.StudyDate, ds.PatientName.family_comma_given(), ds.Modality, studyPath))
+                (ds.StudyInstanceUID, 
+                 ds.StudyDescription if "StudyDescription" in ds else None, 
+                 ds.StudyDate if "StudyDate" in ds else None, 
+                 ds.PatientName.family_comma_given() if "PatientName" in ds else None, 
+                 ds.Modality if "Modality" in ds else None, 
+                 studyPath))
             study = cur.execute('SELECT * FROM study WHERE study_uid = ?', (ds.StudyInstanceUID,)).fetchone()
         else:
             cur.execute(
                 'UPDATE study '
                 'SET updated = ? '
                 'WHERE study_uid = ?',
-                (datetime.datetime.now(), ds.StudyInstanceUID))
+                (datetime.datetime.now(), 
+                 ds.StudyInstanceUID))
 
         series = cur.execute('SELECT * FROM series WHERE series_uid = ?', (ds.SeriesInstanceUID,)).fetchone()
         if series is None:
             cur.execute(
                 'INSERT INTO series (study_id, series_uid, series_desc, series_date, modality, filepath, filesize) '
                 'VALUES (?, ?, ?, ?, ?, ?, ?)',
-                (int(study["id"]), ds.SeriesInstanceUID, ds.SeriesDescription, ds.SeriesDate, ds.Modality, seriesPath, fileSize))
+                (int(study["id"]), 
+                 ds.SeriesInstanceUID, 
+                 ds.SeriesDescription if "SeriesDescription" in ds else None, 
+                 ds.SeriesDate if "SeriesDate" in ds else None, 
+                 ds.Modality if "Modality" in ds else None, 
+                 seriesPath, 
+                 fileSize))
         else:
             fileSize = float(series["filesize"]) + fileSize
             cur.execute(
                 'UPDATE series '
                 'SET updated = ?, filesize = ?'
                 'WHERE id = ?',
-                (datetime.datetime.now(), fileSize, series["id"]))
+                (datetime.datetime.now(), 
+                 fileSize, 
+                 series["id"]))
         
         db.commit()
             
